@@ -14,6 +14,7 @@ import { Route as ResearchRouteImport } from './routes/research'
 import { Route as ExperienceRouteImport } from './routes/experience'
 import { Route as CvRouteImport } from './routes/cv'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ResearchPortfolioCensoredRouteImport } from './routes/research.portfolio-censored'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -40,42 +41,70 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResearchPortfolioCensoredRoute =
+  ResearchPortfolioCensoredRouteImport.update({
+    id: '/portfolio-censored',
+    path: '/portfolio-censored',
+    getParentRoute: () => ResearchRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/cv': typeof CvRoute
   '/experience': typeof ExperienceRoute
-  '/research': typeof ResearchRoute
+  '/research': typeof ResearchRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/research/portfolio-censored': typeof ResearchPortfolioCensoredRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/cv': typeof CvRoute
   '/experience': typeof ExperienceRoute
-  '/research': typeof ResearchRoute
+  '/research': typeof ResearchRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/research/portfolio-censored': typeof ResearchPortfolioCensoredRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/cv': typeof CvRoute
   '/experience': typeof ExperienceRoute
-  '/research': typeof ResearchRoute
+  '/research': typeof ResearchRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/research/portfolio-censored': typeof ResearchPortfolioCensoredRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/cv' | '/experience' | '/research' | '/sitemap.xml'
+  fullPaths:
+    | '/'
+    | '/cv'
+    | '/experience'
+    | '/research'
+    | '/sitemap.xml'
+    | '/research/portfolio-censored'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/cv' | '/experience' | '/research' | '/sitemap.xml'
-  id: '__root__' | '/' | '/cv' | '/experience' | '/research' | '/sitemap.xml'
+  to:
+    | '/'
+    | '/cv'
+    | '/experience'
+    | '/research'
+    | '/sitemap.xml'
+    | '/research/portfolio-censored'
+  id:
+    | '__root__'
+    | '/'
+    | '/cv'
+    | '/experience'
+    | '/research'
+    | '/sitemap.xml'
+    | '/research/portfolio-censored'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CvRoute: typeof CvRoute
   ExperienceRoute: typeof ExperienceRoute
-  ResearchRoute: typeof ResearchRoute
+  ResearchRoute: typeof ResearchRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
@@ -116,16 +145,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/research/portfolio-censored': {
+      id: '/research/portfolio-censored'
+      path: '/portfolio-censored'
+      fullPath: '/research/portfolio-censored'
+      preLoaderRoute: typeof ResearchPortfolioCensoredRouteImport
+      parentRoute: typeof ResearchRoute
+    }
   }
 }
+
+interface ResearchRouteChildren {
+  ResearchPortfolioCensoredRoute: typeof ResearchPortfolioCensoredRoute
+}
+
+const ResearchRouteChildren: ResearchRouteChildren = {
+  ResearchPortfolioCensoredRoute: ResearchPortfolioCensoredRoute,
+}
+
+const ResearchRouteWithChildren = ResearchRoute._addFileChildren(
+  ResearchRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CvRoute: CvRoute,
   ExperienceRoute: ExperienceRoute,
-  ResearchRoute: ResearchRoute,
+  ResearchRoute: ResearchRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
