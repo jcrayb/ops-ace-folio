@@ -20,6 +20,8 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+routes/routeTree.gen.ts
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
