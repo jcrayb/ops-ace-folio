@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SectionHeading } from "@/components/SectionHeading";
 
 export const Route = createFileRoute("/research")({
@@ -13,7 +13,19 @@ export const Route = createFileRoute("/research")({
   component: ResearchPage,
 });
 
-const working = [
+const working: Array<{
+  title: string;
+  authors: string;
+  status: string;
+  award?: string;
+  href?: string;
+}> = [
+  {
+    title: "Portfolio Optimization with Censored Return Distributions",
+    authors: "J.-C. Raymond-Bertrand, C. Ari",
+    status: "Working paper · 2026",
+    href: "/research/portfolio-censored",
+  },
   {
     title: "Data-Driven Multi-Stage Stochastic Programming with Side Information",
     authors: "J.-C. Raymond-Bertrand, N. Ho-Nguyen, R. Kannan, J. Luedtke",
