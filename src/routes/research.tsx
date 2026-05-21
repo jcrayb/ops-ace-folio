@@ -110,7 +110,16 @@ function ResearchPage() {
       <ul className="mt-4">
         {working.map((p) => (
           <PaperRow key={p.title}>
-            <p className="font-serif text-lg font-bold leading-snug text-foreground">{p.title}</p>
+            {p.href ? (
+              <Link
+                to={p.href}
+                className="font-serif text-lg font-bold leading-snug text-foreground underline decoration-accent/40 underline-offset-4 transition hover:decoration-accent"
+              >
+                {p.title}
+              </Link>
+            ) : (
+              <p className="font-serif text-lg font-bold leading-snug text-foreground">{p.title}</p>
+            )}
             <p className="mt-1 text-sm text-muted-foreground">{p.authors}</p>
             <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
               <span className="rounded bg-secondary px-2 py-0.5 font-mono text-muted-foreground">{p.status}</span>
